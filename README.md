@@ -1,4 +1,4 @@
-# Project Builder SDK
+<h1 align="center">🚀 Project Builder SDK 🤖</h1>
 
 <p align="center">
   <strong>A governed multi-agent software engineering workflow for turning constrained natural-language requirements into validated FastAPI MVPs.</strong>
