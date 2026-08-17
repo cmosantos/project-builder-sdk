@@ -34,7 +34,7 @@ flowchart TD
     R --> A[Project Architect]
     A --> D[Project Developer]
     D --> W[(Generated Workspace)]
-    W --> MCP[MCP Workspace Server<br/>read-only]
+    W --> MCP[MCP Workspace Server - read only]
     MCP --> Q[Project QA]
     Q -->|Approved| RT[Runtime Gate]
     Q -->|Rejected| RP[Repair Agent]
@@ -77,9 +77,9 @@ Project QA
     |
     v
 Runtime Gate
-    |- Smoke test
-    |- Pytest
-    `- Real HTTP liveness check
+    |-- Smoke test
+    |-- Pytest
+    `-- Real HTTP liveness check
     |
     v
 Build Health
@@ -109,9 +109,9 @@ Project Builder SDK explores a stricter approach:
 - restrict generated files to a known project shape;
 - inspect the generated workspace through a read-only MCP boundary;
 - require QA approval before runtime execution;
-- run generated code from a controlled temporary workspace;
+- run generated code in a controlled temporary workspace;
 - require real tests and a real HTTP response;
-- bound repair attempts, execution time, and token usage;
+- bound repair attempts, duration, and token usage;
 - generate machine-readable build evidence;
 - keep build history and compare quality and performance over time.
 
@@ -123,9 +123,9 @@ The project is primarily an engineering experiment in **agent orchestration, gov
 
 ### 1. Request Gate
 
-The Request Gate decides whether a request fits the current Builder profile before expensive generation begins. It returns `IMPLEMENTABLE`, `NEEDS_INPUT`, or `UNSUPPORTED` and is not allowed to make an unsupported request appear valid by silently removing requirements.
+The Request Gate decides whether a request fits the current Builder profile before expensive generation begins. It returns `IMPLEMENTABLE`, `NEEDS_INPUT`, or `UNSUPPORTED`, and it is not allowed to make an unsupported request appear valid by silently removing requirements.
 
-### 2. Requirement contract preservation
+### 2. Requirement-contract preservation
 
 The original user request is stored in the workflow context and remains the primary contract.
 
@@ -202,12 +202,12 @@ Repair must preserve the original requirement contract.
 Generated projects are executed from a temporary copy of the workspace. The runtime gate performs:
 
 1. Python/FastAPI smoke test
-2. Generated-project pytest suite
-3. Real Uvicorn HTTP liveness check over loopback
+2. generated-project pytest suite
+3. real Uvicorn HTTP liveness check over loopback
 
 The HTTP checker supports applications that expose OpenAPI as well as valid applications that intentionally disable `/openapi.json`.
 
-> **Security note:** `SANDBOX_LOCAL` is a controlled local execution boundary, not kernel, VM, or container isolation. It limits operations, uses temporary copies and timeouts, and cleans registered processes, but it should not be treated as a hardened sandbox for hostile code.
+> **Security note:** `SANDBOX_LOCAL` is a controlled local execution boundary, not kernel, VM, or container isolation. It limits operations, uses temporary copies and timeouts, and cleans registered processes, but it should not be treated as a hardened sandbox for untrusted hostile code.
 
 ### 9. Build health and policy
 
@@ -250,7 +250,7 @@ Observability is optional; project generation can run without LangSmith configur
 - pytest
 - httpx
 - Uvicorn
-- fixed seven-file output structure
+- the fixed seven-file output structure
 
 ### Not supported in V1
 
@@ -388,7 +388,7 @@ python -m pytest -q
 
 ### Stable V1 acceptance baseline
 
-The source published for the first public V1 baseline completed its local core suite with:
+The stabilized V1 source used for the first public baseline completed its local core suite with:
 
 ```text
 110 passed
@@ -433,7 +433,7 @@ If OpenAPI is intentionally disabled, the runtime falls back to liveness semanti
 
 ## Generated state and source control
 
-The following are local/generated artifacts and are excluded from Git:
+The following are local or generated artifacts and are excluded from Git:
 
 ```text
 .env
