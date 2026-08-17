@@ -1,4 +1,4 @@
-# Project Builder SDK
+﻿# Project Builder SDK
 
 <p align="center">
   <strong>A governed multi-agent software engineering workflow for turning constrained natural-language requirements into validated FastAPI MVPs.</strong>
@@ -7,7 +7,7 @@
 <p align="center">
   <img alt="Python 3.11+" src="https://img.shields.io/badge/Python-3.11%2B-3776AB">
   <img alt="Status Stable V1" src="https://img.shields.io/badge/status-stable%20V1-2EA44F">
-  <img alt="Core tests 108 passed" src="https://img.shields.io/badge/core%20tests-108%20passed-2EA44F">
+  <img alt="Core tests 110 passed" src="https://img.shields.io/badge/core%20tests-110%20passed-2EA44F">
   <img alt="MCP read-only" src="https://img.shields.io/badge/MCP-read--only%20workspace-6F42C1">
   <img alt="Sandbox Local" src="https://img.shields.io/badge/runtime-SANDBOX__LOCAL-0A7BBC">
 </p>
@@ -56,30 +56,30 @@ flowchart TD
 
 ```text
 Request Gate
-    ↓
+    â†“
 Project Router
-    ↓
+    â†“
 Project Architect
-    ↓
+    â†“
 Project Developer
-    ↓
+    â†“
 Workspace
-    ↓
+    â†“
 MCP read-only inspection
-    ↓
+    â†“
 Project QA
-    ↓
+    â†“
 Runtime Gate
-    ├── Smoke test
-    ├── Pytest
-    └── Real HTTP liveness check
-    ↓
+    â”œâ”€â”€ Smoke test
+    â”œâ”€â”€ Pytest
+    â””â”€â”€ Real HTTP liveness check
+    â†“
 Build Health
-    ↓
+    â†“
 Build Policy
-    ↓
+    â†“
 Evidence + Comparison + History
-    ↓
+    â†“
 COMPLETED
 ```
 
@@ -120,9 +120,9 @@ The original user request is stored in the workflow context and remains the prim
 
 ```text
 Original user request
-        ↓
+        â†“
 ArchitecturePlan
-        ↓
+        â†“
 Implementation
 ```
 
@@ -132,12 +132,12 @@ Explicit literals, enum values, routes, HTTP codes, transitions, and other user 
 
 The workflow uses explicit agent responsibilities rather than a single prompt:
 
-- **Request Gate** — scope decision
-- **Project Router** — workflow routing
-- **Project Architect** — structured architecture plan
-- **Project Developer** — implementation
-- **Project QA** — contract and code review
-- **Repair Agent** — bounded corrective pass
+- **Request Gate** â€” scope decision
+- **Project Router** â€” workflow routing
+- **Project Architect** â€” structured architecture plan
+- **Project Developer** â€” implementation
+- **Project QA** â€” contract and code review
+- **Repair Agent** â€” bounded corrective pass
 
 ### 4. Fixed workspace contract
 
@@ -145,15 +145,15 @@ V1 generates exactly seven project artifacts:
 
 ```text
 workspace/
-├── app/
-│   ├── __init__.py
-│   ├── main.py
-│   ├── schemas.py
-│   └── store.py
-├── tests/
-│   └── test_api.py
-├── requirements.txt
-└── README.md
+â”œâ”€â”€ app/
+â”‚   â”œâ”€â”€ __init__.py
+â”‚   â”œâ”€â”€ main.py
+â”‚   â”œâ”€â”€ schemas.py
+â”‚   â””â”€â”€ store.py
+â”œâ”€â”€ tests/
+â”‚   â””â”€â”€ test_api.py
+â”œâ”€â”€ requirements.txt
+â””â”€â”€ README.md
 ```
 
 The workspace lifecycle removes stale or unexpected artifacts before a fresh build so previous runs cannot contaminate QA or runtime results.
@@ -167,7 +167,7 @@ The workspace is exposed to the validation layer through a dedicated **read-only
 QA reviews the actual generated files and compares:
 
 ```text
-original request ↔ ArchitecturePlan ↔ implementation
+original request â†” ArchitecturePlan â†” implementation
 ```
 
 The structured QA report includes approval status, score, approved checks, problems found, recommendations, and reviewed files.
@@ -257,41 +257,41 @@ Unsupported requirements are rejected by the Request Gate rather than silently r
 
 ```text
 project-builder-sdk/
-├── project_builder/
-│   ├── agents.py
-│   ├── config.py
-│   ├── faults.py
-│   ├── models.py
-│   ├── observability.py
-│   ├── request_gate.py
-│   ├── runtime.py
-│   ├── workflow.py
-│   ├── workspace.py
-│   ├── mcp/
-│   │   ├── runtime.py
-│   │   └── workspace_server.py
-│   ├── orchestration/
-│   │   ├── comparison.py
-│   │   ├── evidence.py
-│   │   ├── health.py
-│   │   ├── history.py
-│   │   ├── hooks.py
-│   │   ├── orchestrator.py
-│   │   ├── performance.py
-│   │   ├── policy.py
-│   │   ├── runtime_quality.py
-│   │   ├── state.py
-│   │   ├── timeline.py
-│   │   └── usage.py
-│   └── sandbox/
-│       ├── executor.py
-│       └── policy.py
-├── tests/
-├── .env.example
-├── .gitignore
-├── main.py
-├── pyproject.toml
-└── pytest.ini
+â”œâ”€â”€ project_builder/
+â”‚   â”œâ”€â”€ agents.py
+â”‚   â”œâ”€â”€ config.py
+â”‚   â”œâ”€â”€ faults.py
+â”‚   â”œâ”€â”€ models.py
+â”‚   â”œâ”€â”€ observability.py
+â”‚   â”œâ”€â”€ request_gate.py
+â”‚   â”œâ”€â”€ runtime.py
+â”‚   â”œâ”€â”€ workflow.py
+â”‚   â”œâ”€â”€ workspace.py
+â”‚   â”œâ”€â”€ mcp/
+â”‚   â”‚   â”œâ”€â”€ runtime.py
+â”‚   â”‚   â””â”€â”€ workspace_server.py
+â”‚   â”œâ”€â”€ orchestration/
+â”‚   â”‚   â”œâ”€â”€ comparison.py
+â”‚   â”‚   â”œâ”€â”€ evidence.py
+â”‚   â”‚   â”œâ”€â”€ health.py
+â”‚   â”‚   â”œâ”€â”€ history.py
+â”‚   â”‚   â”œâ”€â”€ hooks.py
+â”‚   â”‚   â”œâ”€â”€ orchestrator.py
+â”‚   â”‚   â”œâ”€â”€ performance.py
+â”‚   â”‚   â”œâ”€â”€ policy.py
+â”‚   â”‚   â”œâ”€â”€ runtime_quality.py
+â”‚   â”‚   â”œâ”€â”€ state.py
+â”‚   â”‚   â”œâ”€â”€ timeline.py
+â”‚   â”‚   â””â”€â”€ usage.py
+â”‚   â””â”€â”€ sandbox/
+â”‚       â”œâ”€â”€ executor.py
+â”‚       â””â”€â”€ policy.py
+â”œâ”€â”€ tests/
+â”œâ”€â”€ .env.example
+â”œâ”€â”€ .gitignore
+â”œâ”€â”€ main.py
+â”œâ”€â”€ pyproject.toml
+â””â”€â”€ pytest.ini
 ```
 
 ---
@@ -378,19 +378,19 @@ python -m pytest -q
 The stabilized V1 source used for the first public baseline completed its local core suite with:
 
 ```text
-108 passed
+110 passed
 ```
 
 A full end-to-end acceptance build also completed with:
 
 ```text
 Stage              COMPLETED
-QA                 APPROVED · 98/100
+QA                 APPROVED Â· 98/100
 Repairs            0
-Runtime            Smoke PASS · Pytest PASS · HTTP PASS
+Runtime            Smoke PASS Â· Pytest PASS Â· HTTP PASS
 Runtime quality    HEALTHY
-Build health       6 PASS · 0 WARN · 0 FAIL
-Build policy       8 PASS · 0 VIOLATIONS
+Build health       6 PASS Â· 0 WARN Â· 0 FAIL
+Build policy       8 PASS Â· 0 VIOLATIONS
 Build duration     50.49 s
 LLM requests       6
 Total tokens       22,460
@@ -473,3 +473,4 @@ Potential next steps after the stable V1 baseline:
 The current codebase has completed the intended V1 stabilization cycle for workspace lifecycle, original-requirement preservation, multi-agent handoffs, MCP inspection, bounded repair, runtime validation, HTTP liveness, build health and policy, evidence/history/comparison, and observability.
 
 Future work should be treated as additive evolution rather than continued V1 stabilization.
+
