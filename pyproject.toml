@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "project-builder-sdk"
+version = "1.0.0"
+description = "Governed multi-agent SDK for generating, validating and repairing FastAPI projects with MCP, sandboxed runtime checks, observability and build evidence."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi",
+    "httpx",
+    "langsmith",
+    "mcp",
+    "openai-agents",
+    "pydantic",
+    "pytest",
+    "python-dotenv",
+    "rich",
+    "uvicorn",
+]
+
+[project.urls]
+Homepage = "https://github.com/cmosantos/project-builder-sdk"
+Repository = "https://github.com/cmosantos/project-builder-sdk"
+Issues = "https://github.com/cmosantos/project-builder-sdk/issues"
+
+[project.scripts]
+project-builder = "main:main"
+
+[tool.setuptools]
+py-modules = ["main"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["project_builder*"]
+exclude = ["tests*", "workspace*"]
