@@ -1,4 +1,4 @@
-﻿# Project Builder SDK
+# Project Builder SDK
 
 <p align="center">
   <strong>A governed multi-agent software engineering workflow for turning constrained natural-language requirements into validated FastAPI MVPs.</strong>
@@ -9,7 +9,7 @@
   <img alt="Status Stable V1" src="https://img.shields.io/badge/status-stable%20V1-2EA44F">
   <img alt="Core tests 110 passed" src="https://img.shields.io/badge/core%20tests-110%20passed-2EA44F">
   <img alt="MCP read-only" src="https://img.shields.io/badge/MCP-read--only%20workspace-6F42C1">
-  <img alt="Sandbox Local" src="https://img.shields.io/badge/runtime-SANDBOX__LOCAL-0A7BBC">
+  <img alt="Runtime SANDBOX_LOCAL" src="https://img.shields.io/badge/runtime-SANDBOX__LOCAL-0A7BBC">
 </p>
 
 ---
@@ -20,7 +20,7 @@
 
 It does more than ask an LLM to write files. A request moves through a governed workflow with explicit scope validation, architecture planning, requirement preservation, implementation, read-only workspace inspection, QA, bounded repair, sandboxed runtime validation, build health checks, policy evaluation, evidence generation, history, and build-to-build comparison.
 
-The current V1 is intentionally narrow: it builds small **FastAPI + Pydantic** APIs using an in-memory store and a fixed seven-file output contract. That constraint is deliberate. The goal of V1 is to make the workflow predictable, inspectable, and testable before expanding the supported project surface.
+V1 is intentionally narrow: it generates small **FastAPI + Pydantic** APIs using in-memory persistence and a fixed seven-file output contract. The scope is constrained on purpose so the workflow can be predictable, inspectable, testable, and governed before broader project types are introduced.
 
 ---
 
@@ -56,30 +56,41 @@ flowchart TD
 
 ```text
 Request Gate
-    â†“
+    |
+    v
 Project Router
-    â†“
+    |
+    v
 Project Architect
-    â†“
+    |
+    v
 Project Developer
-    â†“
+    |
+    v
 Workspace
-    â†“
+    |
+    v
 MCP read-only inspection
-    â†“
+    |
+    v
 Project QA
-    â†“
+    |
+    v
 Runtime Gate
-    â”œâ”€â”€ Smoke test
-    â”œâ”€â”€ Pytest
-    â””â”€â”€ Real HTTP liveness check
-    â†“
+    |- Smoke test
+    |- Pytest
+    `- Real HTTP liveness check
+    |
+    v
 Build Health
-    â†“
+    |
+    v
 Build Policy
-    â†“
+    |
+    v
 Evidence + Comparison + History
-    â†“
+    |
+    v
 COMPLETED
 ```
 
@@ -98,11 +109,11 @@ Project Builder SDK explores a stricter approach:
 - restrict generated files to a known project shape;
 - inspect the generated workspace through a read-only MCP boundary;
 - require QA approval before runtime execution;
-- run generated code in a controlled temporary workspace;
+- run generated code from a controlled temporary workspace;
 - require real tests and a real HTTP response;
-- bound repair attempts, duration, and token usage;
+- bound repair attempts, execution time, and token usage;
 - generate machine-readable build evidence;
-- keep build history and compare quality/performance over time.
+- keep build history and compare quality and performance over time.
 
 The project is primarily an engineering experiment in **agent orchestration, governance, observability, and deterministic guardrails**.
 
@@ -112,17 +123,19 @@ The project is primarily an engineering experiment in **agent orchestration, gov
 
 ### 1. Request Gate
 
-The Request Gate decides whether a request fits the current Builder profile before expensive generation begins. It returns `IMPLEMENTABLE`, `NEEDS_INPUT`, or `UNSUPPORTED`, and it is not allowed to make an unsupported request appear valid by silently removing requirements.
+The Request Gate decides whether a request fits the current Builder profile before expensive generation begins. It returns `IMPLEMENTABLE`, `NEEDS_INPUT`, or `UNSUPPORTED` and is not allowed to make an unsupported request appear valid by silently removing requirements.
 
-### 2. Requirement-contract preservation
+### 2. Requirement contract preservation
 
 The original user request is stored in the workflow context and remains the primary contract.
 
 ```text
 Original user request
-        â†“
+        |
+        v
 ArchitecturePlan
-        â†“
+        |
+        v
 Implementation
 ```
 
@@ -132,12 +145,12 @@ Explicit literals, enum values, routes, HTTP codes, transitions, and other user 
 
 The workflow uses explicit agent responsibilities rather than a single prompt:
 
-- **Request Gate** â€” scope decision
-- **Project Router** â€” workflow routing
-- **Project Architect** â€” structured architecture plan
-- **Project Developer** â€” implementation
-- **Project QA** â€” contract and code review
-- **Repair Agent** â€” bounded corrective pass
+- **Request Gate** - scope decision
+- **Project Router** - workflow routing
+- **Project Architect** - structured architecture plan
+- **Project Developer** - implementation
+- **Project QA** - contract and code review
+- **Repair Agent** - bounded corrective pass
 
 ### 4. Fixed workspace contract
 
@@ -145,15 +158,15 @@ V1 generates exactly seven project artifacts:
 
 ```text
 workspace/
-â”œâ”€â”€ app/
-â”‚   â”œâ”€â”€ __init__.py
-â”‚   â”œâ”€â”€ main.py
-â”‚   â”œâ”€â”€ schemas.py
-â”‚   â””â”€â”€ store.py
-â”œâ”€â”€ tests/
-â”‚   â””â”€â”€ test_api.py
-â”œâ”€â”€ requirements.txt
-â””â”€â”€ README.md
+|-- app/
+|   |-- __init__.py
+|   |-- main.py
+|   |-- schemas.py
+|   `-- store.py
+|-- tests/
+|   `-- test_api.py
+|-- requirements.txt
+`-- README.md
 ```
 
 The workspace lifecycle removes stale or unexpected artifacts before a fresh build so previous runs cannot contaminate QA or runtime results.
@@ -167,7 +180,7 @@ The workspace is exposed to the validation layer through a dedicated **read-only
 QA reviews the actual generated files and compares:
 
 ```text
-original request â†” ArchitecturePlan â†” implementation
+original request <-> ArchitecturePlan <-> implementation
 ```
 
 The structured QA report includes approval status, score, approved checks, problems found, recommendations, and reviewed files.
@@ -189,16 +202,16 @@ Repair must preserve the original requirement contract.
 Generated projects are executed from a temporary copy of the workspace. The runtime gate performs:
 
 1. Python/FastAPI smoke test
-2. generated-project pytest suite
-3. real Uvicorn HTTP liveness check over loopback
+2. Generated-project pytest suite
+3. Real Uvicorn HTTP liveness check over loopback
 
 The HTTP checker supports applications that expose OpenAPI as well as valid applications that intentionally disable `/openapi.json`.
 
-> **Security note:** `SANDBOX_LOCAL` is a controlled local execution boundary, not kernel, VM, or container isolation. It limits operations, uses temporary copies and timeouts, and cleans registered processes, but it should not be treated as a hardened sandbox for untrusted hostile code.
+> **Security note:** `SANDBOX_LOCAL` is a controlled local execution boundary, not kernel, VM, or container isolation. It limits operations, uses temporary copies and timeouts, and cleans registered processes, but it should not be treated as a hardened sandbox for hostile code.
 
 ### 9. Build health and policy
 
-After runtime validation, the Builder evaluates operational quality and policy. Health checks cover workflow completion, QA approval, runtime quality, repair usage, required handoffs, and sandbox cleanup. Policy checks enforce the configured budgets and mandatory gates.
+After runtime validation, the Builder evaluates operational quality and policy. Health checks cover workflow completion, QA approval, runtime quality, repair usage, required handoffs, and sandbox cleanup. Policy checks enforce configured budgets and mandatory gates.
 
 ### 10. Build evidence
 
@@ -237,15 +250,15 @@ Observability is optional; project generation can run without LangSmith configur
 - pytest
 - httpx
 - Uvicorn
-- the fixed seven-file output structure
+- fixed seven-file output structure
 
 ### Not supported in V1
 
 - frontend frameworks or web UIs
-- React, Vue or Angular
-- persistent/external databases
+- React, Vue, or Angular
+- persistent or external databases
 - SQLAlchemy or Alembic
-- authentication, login, JWT or OAuth
+- authentication, login, JWT, or OAuth
 - Docker generation
 - arbitrary additional output files
 
@@ -257,41 +270,41 @@ Unsupported requirements are rejected by the Request Gate rather than silently r
 
 ```text
 project-builder-sdk/
-â”œâ”€â”€ project_builder/
-â”‚   â”œâ”€â”€ agents.py
-â”‚   â”œâ”€â”€ config.py
-â”‚   â”œâ”€â”€ faults.py
-â”‚   â”œâ”€â”€ models.py
-â”‚   â”œâ”€â”€ observability.py
-â”‚   â”œâ”€â”€ request_gate.py
-â”‚   â”œâ”€â”€ runtime.py
-â”‚   â”œâ”€â”€ workflow.py
-â”‚   â”œâ”€â”€ workspace.py
-â”‚   â”œâ”€â”€ mcp/
-â”‚   â”‚   â”œâ”€â”€ runtime.py
-â”‚   â”‚   â””â”€â”€ workspace_server.py
-â”‚   â”œâ”€â”€ orchestration/
-â”‚   â”‚   â”œâ”€â”€ comparison.py
-â”‚   â”‚   â”œâ”€â”€ evidence.py
-â”‚   â”‚   â”œâ”€â”€ health.py
-â”‚   â”‚   â”œâ”€â”€ history.py
-â”‚   â”‚   â”œâ”€â”€ hooks.py
-â”‚   â”‚   â”œâ”€â”€ orchestrator.py
-â”‚   â”‚   â”œâ”€â”€ performance.py
-â”‚   â”‚   â”œâ”€â”€ policy.py
-â”‚   â”‚   â”œâ”€â”€ runtime_quality.py
-â”‚   â”‚   â”œâ”€â”€ state.py
-â”‚   â”‚   â”œâ”€â”€ timeline.py
-â”‚   â”‚   â””â”€â”€ usage.py
-â”‚   â””â”€â”€ sandbox/
-â”‚       â”œâ”€â”€ executor.py
-â”‚       â””â”€â”€ policy.py
-â”œâ”€â”€ tests/
-â”œâ”€â”€ .env.example
-â”œâ”€â”€ .gitignore
-â”œâ”€â”€ main.py
-â”œâ”€â”€ pyproject.toml
-â””â”€â”€ pytest.ini
+|-- project_builder/
+|   |-- agents.py
+|   |-- config.py
+|   |-- faults.py
+|   |-- models.py
+|   |-- observability.py
+|   |-- request_gate.py
+|   |-- runtime.py
+|   |-- workflow.py
+|   |-- workspace.py
+|   |-- mcp/
+|   |   |-- runtime.py
+|   |   `-- workspace_server.py
+|   |-- orchestration/
+|   |   |-- comparison.py
+|   |   |-- evidence.py
+|   |   |-- health.py
+|   |   |-- history.py
+|   |   |-- hooks.py
+|   |   |-- orchestrator.py
+|   |   |-- performance.py
+|   |   |-- policy.py
+|   |   |-- runtime_quality.py
+|   |   |-- state.py
+|   |   |-- timeline.py
+|   |   `-- usage.py
+|   `-- sandbox/
+|       |-- executor.py
+|       `-- policy.py
+|-- tests/
+|-- .env.example
+|-- .gitignore
+|-- main.py
+|-- pyproject.toml
+`-- pytest.ini
 ```
 
 ---
@@ -375,7 +388,7 @@ python -m pytest -q
 
 ### Stable V1 acceptance baseline
 
-The stabilized V1 source used for the first public baseline completed its local core suite with:
+The source published for the first public V1 baseline completed its local core suite with:
 
 ```text
 110 passed
@@ -385,12 +398,12 @@ A full end-to-end acceptance build also completed with:
 
 ```text
 Stage              COMPLETED
-QA                 APPROVED Â· 98/100
+QA                 APPROVED - 98/100
 Repairs            0
-Runtime            Smoke PASS Â· Pytest PASS Â· HTTP PASS
+Runtime            Smoke PASS - Pytest PASS - HTTP PASS
 Runtime quality    HEALTHY
-Build health       6 PASS Â· 0 WARN Â· 0 FAIL
-Build policy       8 PASS Â· 0 VIOLATIONS
+Build health       6 PASS - 0 WARN - 0 FAIL
+Build policy       8 PASS - 0 VIOLATIONS
 Build duration     50.49 s
 LLM requests       6
 Total tokens       22,460
@@ -440,9 +453,9 @@ __pycache__/
 
 **Gates before execution.** Generated code must pass QA before runtime validation.
 
-**Bounded autonomy.** Repairs, time and token budgets are finite.
+**Bounded autonomy.** Repairs, time, and token budgets are finite.
 
-**Evidence over assumption.** Runtime checks, test output, traces and manifests provide observable evidence.
+**Evidence over assumption.** Runtime checks, test output, traces, and manifests provide observable evidence.
 
 **Read-only inspection.** MCP workspace access is designed for deterministic inspection rather than unrestricted mutation.
 
@@ -473,4 +486,3 @@ Potential next steps after the stable V1 baseline:
 The current codebase has completed the intended V1 stabilization cycle for workspace lifecycle, original-requirement preservation, multi-agent handoffs, MCP inspection, bounded repair, runtime validation, HTTP liveness, build health and policy, evidence/history/comparison, and observability.
 
 Future work should be treated as additive evolution rather than continued V1 stabilization.
-
